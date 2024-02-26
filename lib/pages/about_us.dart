@@ -172,14 +172,7 @@ class _AboutUsState extends State<AboutUs> {
                       itemCount: _contacts.length,
                       itemBuilder: (context, index) {
                         Contact contact = _contacts[index];
-                        return GestureDetector(
-                          onTap: (){
-                            if(contact.phones != null && contact.phones!.isNotEmpty){
-                              String phoneNumber = contact.phones!.first.value!;
-                              launch("tel:$phoneNumber");
-                            }
-                          },
-                          child: Container(
+                        return Container(
                             decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
                             borderRadius: const BorderRadius.horizontal(),
@@ -194,9 +187,17 @@ class _AboutUsState extends State<AboutUs> {
                                 ),
                               title: Text(contact.displayName ?? ''),
                               subtitle: Text(contact.phones!.isNotEmpty ? contact.phones!.first.value ?? '' : ''),
+                              trailing: GestureDetector(
+                                onTap: (){
+                                  if(contact.phones != null && contact.phones!.isNotEmpty){
+                                    String phoneNumber = contact.phones!.first.value!;
+                                    launch("tel:$phoneNumber");
+                                  }
+                                },
+                                child: const Icon(Icons.call),
+                              )
                             ),
-                          ),
-                        );
+                          );
                       },
                     ),
                   ),
