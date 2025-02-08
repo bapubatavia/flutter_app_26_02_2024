@@ -1,12 +1,24 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:app_with_tabs/controller/theme_controller.dart';
 import 'package:app_with_tabs/dependency_injection.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'homepage.dart';
+import 'pages/login_gateway.dart';
 
 Future<void> main() async{
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'basic_channel', 
+        channelName: 'Bsic notifications', 
+        channelDescription: 'Notification channel for basic tests',
+      )
+    ],
+    debug: true,
+  );
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -52,7 +64,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() => GetMaterialApp(
       theme: themeController.currentTheme.value,
-      home: const HomePage(),
+      home: const LoginGateway(),
       debugShowCheckedModeBanner: false,
     ));
   }

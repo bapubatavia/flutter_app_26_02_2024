@@ -1,8 +1,87 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app_with_tabs/pages/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignupPage>{
+  String _email = '';
+  String _password = '';
+  String _confirmPassword = '';
+
+
+  Future<void> createUser() async{
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
+      print('User signed up successfully: ${userCredential.user}');
+      showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("User Created!"),
+            content: const Text("Your account has been sucessfully created!"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  const LoginPage()));
+                },
+                child: const Text("Ok"),
+              ),
+            ],
+          );
+        },
+      );
+    }catch(e){
+      showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error!"),
+            content: const Text("Issue"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  const LoginPage()));
+                },
+                child: const Text("Ok"),
+              ),
+            ],
+          );
+        },
+      );
+      print('Error signing up: $e');
+    }
+  }
+
+// Function to show a dialog for password mismatch
+  void _showPasswordMismatchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Password Mismatch"),
+          content: const Text("The passwords you entered don't match."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +124,21 @@ class SignupPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: Column(
                         children: <Widget>[
-                          makeInput(label: "Email"),
-                          makeInput(label: "Password", obscureText: true),
-                          makeInput(label: "Confirm Password", obscureText: true)
+                          makeInput(label: "Email", onChanged: (value){
+                            setState(() {
+                              _email = value;
+                            });
+                          }),
+                          makeInput(label: "Password", obscureText: true, onChanged: (value){
+                            setState(() {
+                              _password = value;
+                            });
+                          }),
+                          makeInput(label: "Confirm Password", obscureText: true, onChanged: (value){
+                            setState(() {
+                              _confirmPassword = value;
+                            });
+                          }),
                         ]),
                     ),
                     Container(
@@ -57,14 +148,16 @@ class SignupPage extends StatelessWidget {
                         elevation: 0,
                         minWidth: double.infinity,
                         height: 60,
-                        onPressed: () {},
+                        onPressed: () {
+                          _password == _confirmPassword? createUser() : _showPasswordMismatchDialog();
+                        },
                         shape: RoundedRectangleBorder(
                         side: const BorderSide(
                           color: Colors.black,
                         ),
                         borderRadius: BorderRadius.circular(50),
                         ),
-                        child: const Text("Login", style: TextStyle(
+                        child: const Text("Sign Up", style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
                         )),
@@ -82,7 +175,7 @@ class SignupPage extends StatelessWidget {
                               fontSize: 18,
                           ),),
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  const LoginPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginPage()));
                           },
                         ),
                       ],
@@ -96,8 +189,8 @@ class SignupPage extends StatelessWidget {
       )
     );
   }
-
-  Widget makeInput({label, obscureText = false}) {
+}
+  Widget makeInput({label, obscureText = false, onChanged}) {
     return Column(
       children: <Widget>[
         Text(label, style: const TextStyle(
@@ -106,6 +199,7 @@ class SignupPage extends StatelessWidget {
         ),),
         const SizedBox(height: 5,),
         TextField(
+          onChanged: onChanged,
           obscureText: obscureText,
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 10),
@@ -121,4 +215,3 @@ class SignupPage extends StatelessWidget {
       ],
     );
   }
-}

@@ -1,11 +1,20 @@
-import 'package:app_with_tabs/homepage.dart';
+import 'package:app_with_tabs/pages/homepage.dart';
 import 'package:app_with_tabs/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  _LoginPage createState() => _LoginPage();
+}
+
+class _LoginPage extends State<LoginPage>{
+  String _email = '';
+  String _password = '';
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +56,16 @@ class LoginPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: Column(
                       children: <Widget>[
-                        makeInput(label: "Email"),
-                        makeInput(label: "Password", obscureText: true)
+                        makeInput(label: "Email", onChanged: (value){
+                            setState(() {
+                              _email = value;
+                            });
+                          }),
+                        makeInput(label: "Password", obscureText: true, onChanged: (value){
+                            setState(() {
+                              _password = value;
+                            });
+                          }),
                       ]),
                   ),
                   Padding(
@@ -59,7 +76,7 @@ class LoginPage extends StatelessWidget {
                       minWidth: double.infinity,
                       height: 60,
                       onPressed: () {
-                        
+                        signIn();
                       },
                       shape: RoundedRectangleBorder(
                       side: const BorderSide(
@@ -83,7 +100,7 @@ class LoginPage extends StatelessWidget {
                           fontSize: 18,
                         ),),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>  const SignupPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage()));
                         },
                       ),
                     ],
@@ -104,8 +121,6 @@ class LoginPage extends StatelessWidget {
                       height: 45,
                       onPressed: ()async {
                         bool success = await _signInWithGoogle();
-                        // await FirebaseAuth.instance.signOut();
-                        // await GoogleSignIn().signOut();
                         if(success){
                           // ignore: use_build_context_synchronously
                           Navigator.push(context, MaterialPageRoute(builder: (context) =>  const HomePage()));
@@ -117,10 +132,20 @@ class LoginPage extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(50),
                       ),
-                      child: const Text("Sign in with Google", style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      )),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/img/google.jpeg',
+                            height: 50,
+                            width: 50,
+                          ),
+                          const Text("Sign in with Google", style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          )),
+                        ],
+                      ),
                     ),
                   ),
                   Container(
@@ -140,7 +165,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget makeInput({label, obscureText = false}) {
+  Widget makeInput({label, obscureText = false, onChanged}) {
     return Column(
       children: <Widget>[
         Text(label, style: const TextStyle(
@@ -149,6 +174,7 @@ class LoginPage extends StatelessWidget {
         ),),
         const SizedBox(height: 5,),
         TextField(
+          onChanged: onChanged,
           obscureText: obscureText,
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 10),
@@ -165,36 +191,65 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-    _signInWithGoogle()async{
+    Future<bool> _signInWithGoogle()async{
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+      try{
+        final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
-    try{
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+        if(googleSignInAccount != null ){
+          final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
-      if(googleSignInAccount != null ){
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken
-        );
-
-
-        await firebaseAuth.signInWithCredential(credential);
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken
+          );
 
 
+          await firebaseAuth.signInWithCredential(credential);
+          return true;
+
+        }
+
+      }catch(e){
+        print('error caught: $e');
+        return false;
       }
-
-      
-
-    }catch(e){
-      print('error caught: $e');
+      return false;
     }
-
-  }
   
+  Future<void> signIn() async{
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
+      print('User signed in successfully: ${userCredential.user}');
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const HomePage()));
+    }catch(e){
+      print('Error signing up: $e');
+      _incorrectCredentialsDialog();
+    }
+  }
+
+
+  void _incorrectCredentialsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Incorrect Credentials"),
+          content: const Text("The password or email you entered are not correct."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 
 }

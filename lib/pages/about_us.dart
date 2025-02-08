@@ -1,15 +1,11 @@
-// 
-
 import 'dart:typed_data';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:app_with_tabs/utils.dart';
-import 'package:contacts_service/contacts_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class AboutUs extends StatefulWidget {
-  const AboutUs({Key? key}) : super(key: key);
+  const AboutUs({super.key});
 
   @override
   State<AboutUs> createState() => _AboutUsState();
@@ -17,41 +13,11 @@ class AboutUs extends StatefulWidget {
 
 class _AboutUsState extends State<AboutUs> {
   Uint8List? _image;
-  List<Contact> _contacts = [];
-  bool _showContacts = false;
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-    _askPermissions();
-  }
-
-  Future<void> _askPermissions() async {
-    // Request contacts permission
-    PermissionStatus permissionStatus = await Permission.contacts.request();
-    if (permissionStatus == PermissionStatus.granted) {
-      _loadContacts();
-    } else {
-      // Handle denied or restricted permission
-    }
-  }
-
-  Future<void> _loadContacts() async {
-    // Load contacts if permission is granted
-    Iterable<Contact> contacts = await ContactsService.getContacts();
-    setState(() {
-      _contacts = contacts.toList();
-    });
-  }
-
-  void _handleInvalidPermissions(PermissionStatus permissionStatus) {
-    if (permissionStatus == PermissionStatus.denied) {
-      const snackBar = SnackBar(content: Text('Access to contact data denied'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
-      const snackBar = SnackBar(content: Text('Contact data not available on device'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
   }
 
   void selectImage(String type) async {
@@ -66,6 +32,7 @@ class _AboutUsState extends State<AboutUs> {
 
   @override
   Widget build(BuildContext context) {
+    String email = user?.email ?? 'No email found';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Creator ID card', style: TextStyle(fontSize: 18.0)),
@@ -118,7 +85,7 @@ class _AboutUsState extends State<AboutUs> {
                 color: Colors.grey[900],
               ),
               Text(
-                'NAME',
+                'EMAIL',
                 style: TextStyle(
                   color: Colors.grey[800],
                   letterSpacing: 2.0,
@@ -126,7 +93,7 @@ class _AboutUsState extends State<AboutUs> {
               ),
               const SizedBox(height: 10.0),
               Text(
-                'Luc Bapu BATAVIA',
+                email,
                 style: TextStyle(
                     color: Colors.green[400],
                     letterSpacing: 2.0,
@@ -134,75 +101,6 @@ class _AboutUsState extends State<AboutUs> {
                     fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 30.0),
-              MaterialButton(
-                color: Colors.green[400],
-                elevation: 0,
-                minWidth: double.infinity,
-                height: 40,
-                onPressed: () {
-                  setState(() {
-                    _showContacts = !_showContacts;
-                  });
-                },
-                shape: RoundedRectangleBorder(
-                side: const BorderSide(
-                  color: Colors.black,
-                ),
-                borderRadius: BorderRadius.circular(50),
-                ),                
-                child: Text(
-                  _showContacts ? 'Hide Contacts' : 'Show Contacts',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                ),
-              ),
-              const SizedBox(height: 10.0),
-              Visibility(
-                visible: _showContacts,
-                child: Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey, width: 2.0),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _contacts.length,
-                      itemBuilder: (context, index) {
-                        Contact contact = _contacts[index];
-                        return Container(
-                            decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: const BorderRadius.horizontal(),
-                            ),
-                            child: ListTile(
-                              leading: (contact.avatar != null && contact.avatar!.isNotEmpty)
-                                ? CircleAvatar(
-                                  backgroundImage: MemoryImage(contact.avatar!),
-                                ) 
-                                : CircleAvatar(
-                                  child: Text(contact.initials()),
-                                ),
-                              title: Text(contact.displayName ?? ''),
-                              subtitle: Text(contact.phones!.isNotEmpty ? contact.phones!.first.value ?? '' : ''),
-                              trailing: GestureDetector(
-                                onTap: (){
-                                  if(contact.phones != null && contact.phones!.isNotEmpty){
-                                    String phoneNumber = contact.phones!.first.value!;
-                                    launch("tel:$phoneNumber");
-                                  }
-                                },
-                                child: const Icon(Icons.call),
-                              )
-                            ),
-                          );
-                      },
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -214,7 +112,7 @@ class _AboutUsState extends State<AboutUs> {
 class OptionDialog extends StatelessWidget {
   final Function(String) onSelectImage;
 
-  const OptionDialog({Key? key, required this.onSelectImage}) : super(key: key);
+  const OptionDialog({super.key, required this.onSelectImage});
 
   @override
   Widget build(BuildContext context) {

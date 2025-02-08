@@ -1,16 +1,19 @@
 
+// import 'package:app_with_tabs/controller/authentication_controller.dart';
+import 'package:app_with_tabs/repository/answer_repository.dart';
+import 'package:app_with_tabs/repository/question_repository.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 class NetworkController extends GetxController{
   final Connectivity _connectivity = Connectivity();
-
+  // final AuthController authController = AuthController();
   @override
   void onInit(){
     super.onInit();
     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    
+    // authController.checkUserRole();
   }
 
   void _updateConnectionStatus(ConnectivityResult connectivityResult){
@@ -32,7 +35,12 @@ class NetworkController extends GetxController{
         snackStyle: SnackStyle.GROUNDED,
       );
     } else{
-
+      // if(authController.isAdmin()){
+      //   Get.put(AnswerRepository());
+      //   Get.put(QuestionRepository());
+      //   AnswerRepository.instance.syncAnswersWithFirestore();
+      //   QuestionRepository.instance.syncQuestionsWithFirestore();
+      // }
       if(Get.isSnackbarOpen){
         Get.closeCurrentSnackbar();
       }
