@@ -48,90 +48,92 @@ class _CalculatorState extends State<Calculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding( 
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          mainAxisAlignment:  MainAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(text,
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                    fontSize: 100
+      body: SingleChildScrollView(
+        child: Padding( 
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Column(
+            mainAxisAlignment:  MainAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(text,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                      fontSize: 100
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
-              children: [
-                calculatorBtn('AC', Colors.grey, Colors.white, 28),
-                calculatorBtn('⌫', Colors.grey, Colors.white, 32),
-                calculatorBtn('%', Colors.grey, Colors.white, 35),
-                calculatorBtn('/', (Colors.green[400])!, Colors.white, 35),
-              ],
-            ),
-            const SizedBox(height: 10),
-            //copy paste rows
-            Row(
-              mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
-              children: [
-                calculatorBtn('7', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('8', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('9', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('x', (Colors.green[400])!, Colors.white, 35),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
-              children: [
-                calculatorBtn('4', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('5', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('6', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('-', (Colors.green[400])!, Colors.white, 35),
-              ],
-            ),
-            const SizedBox(height: 10),  
-            Row(
-              mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
-              children: [
-                calculatorBtn('1', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('2', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('3', (Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('+', (Colors.green[400])!, Colors.white, 35),
-              ],
-            ),
-            const SizedBox(height: 10),                      
-            // last row with the 0 button
-            Row (
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: (){
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.fromLTRB(34, 15, 100, 15),
-                    shape: const StadiumBorder(),
-                    backgroundColor: (Colors.grey[850])!
-                  ),
-                  child: const Text("0",
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white
+                ],
+              ),
+              Row(
+                mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
+                children: [
+                  calculatorBtn('AC', Colors.grey, Colors.white, 28),
+                  calculatorBtn('⌫', Colors.grey, Colors.white, 32),
+                  calculatorBtn('%', Colors.grey, Colors.white, 35),
+                  calculatorBtn('/', (Colors.green[400])!, Colors.white, 35),
+                ],
+              ),
+              const SizedBox(height: 10),
+              //copy paste rows
+              Row(
+                mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
+                children: [
+                  calculatorBtn('7', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('8', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('9', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('x', (Colors.green[400])!, Colors.white, 35),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
+                children: [
+                  calculatorBtn('4', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('5', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('6', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('-', (Colors.green[400])!, Colors.white, 35),
+                ],
+              ),
+              const SizedBox(height: 10),  
+              Row(
+                mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
+                children: [
+                  calculatorBtn('1', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('2', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('3', (Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('+', (Colors.green[400])!, Colors.white, 35),
+                ],
+              ),
+              const SizedBox(height: 10),                      
+              // last row with the 0 button
+              Row (
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: (){
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.fromLTRB(34, 15, 100, 15),
+                      shape: const StadiumBorder(),
+                      backgroundColor: (Colors.grey[850])!
+                    ),
+                    child: const Text("0",
+                      style: TextStyle(
+                        fontSize: 35,
+                        color: Colors.white
+                      ),
                     ),
                   ),
-                ),
-                calculatorBtn('.',(Colors.grey[850])!, Colors.white, 35),
-                calculatorBtn('=',(Colors.green[400])!, Colors.white, 35),
-              ],
-            )
-          ],
+                  calculatorBtn('.',(Colors.grey[850])!, Colors.white, 35),
+                  calculatorBtn('=',(Colors.green[400])!, Colors.white, 35),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

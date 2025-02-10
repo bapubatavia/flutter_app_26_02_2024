@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 
 class AnswerRepository extends GetxController{
-  static AnswerRepository get instance => Get.find();
+  static AnswerRepository get instance => Get.put(AnswerRepository());
 
   final _db = FirebaseFirestore.instance;
 
@@ -16,7 +16,7 @@ class AnswerRepository extends GetxController{
     var connectivityResult = await Connectivity().checkConnectivity();
     if(connectivityResult != ConnectivityResult.none){
       try{
-        await _db.collection("Answers").add(answer.toJson());
+        await _db.collection("Answers").add(answer.toJson(true));
         Get.snackbar("Success", "Answer stored successfully.",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green.withOpacity(0.1),
@@ -35,31 +35,35 @@ class AnswerRepository extends GetxController{
     }
   }
 
-  getAnswersPerQuestion(QuestionModel questionModel) async {
+  List<AnswerModel> FirestoreAnswersList(QuerySnapshot querySnapshot) {
+    return querySnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return AnswerModel.fromJson(data);
+    }).toList();
+  }
+
+  Future<List<AnswerModel>>getAnswersPerQuestion(QuestionModel questionModel) async {
     var connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult != ConnectivityResult.none) {
       try {
         QuerySnapshot querySnapshot = await _db.collection("Answers").where("QuestionId", isEqualTo: questionModel.id).get();
-        List<AnswerModel> answers = querySnapshot.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-          return AnswerModel.fromJson(data);
-        }).toList();
-
+        List<AnswerModel> answers = FirestoreAnswersList(querySnapshot);
 
         return answers;
       } catch (error) {
         handleErrors(error, "Answers");
+        return [];
       }
     } else {
       print('no connection');
+      return [];
     }
   }
 
   Future<void> updateAnswer(AnswerModel answer) async {
   try {
     // Update answer in Firestore
-    await _db.collection("Answers").doc(answer.id as String?).update(answer.toJson());
+    await _db.collection("Answers").doc(answer.id as String?).update(answer.toJson(true));
   } catch (error) {
     handleErrors(error,"Answers");
   }
@@ -68,7 +72,33 @@ class AnswerRepository extends GetxController{
   Future<void> deleteAnswer(int id) async {
     try {
       // Delete answer from Firestore
-      await _db.collection("Answers").doc(id as String?).delete();
+      await _db.collection("Answers").doc(id.toString()).delete();
+    } catch (error) {
+      handleErrors(error,"Answers");
+    }
+  }
+
+  Future<void> deleteQuizAnswers(QuestionModel question) async {
+    try {
+      // Delete all answers for a specific question from Firestore
+      QuerySnapshot querySnapshot = await _db.collection("Answers").where('QuestionId', isEqualTo: question.id).get();
+      for(var answer in querySnapshot.docs){
+        print("about to delete this answer: ${answer.reference.id}");
+        answer.reference.delete();
+      }
+    } catch (error) {
+      handleErrors(error,"Answers");
+    }
+  }
+
+  Future<void> deleteAllAnswers() async {
+    try {
+      // Delete question from Firestore
+      QuerySnapshot querySnapshot = await _db.collection("Answers").get();
+      print("about to delete ${querySnapshot.size} answers");
+      for (var answer in querySnapshot.docs){
+        answer.reference.delete();
+      }
     } catch (error) {
       handleErrors(error,"Answers");
     }
@@ -76,31 +106,32 @@ class AnswerRepository extends GetxController{
 
   Future<void> syncAnswersWithFirestore() async {
     try {
+      //Get all answers from firestore
       QuerySnapshot querySnapshot = await _db.collection("Answers").get();
-      List<AnswerModel> firestoreAnswers = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        return AnswerModel.fromJson(data);
-      }).toList();
+      List<AnswerModel> firestoreAnswers = FirestoreAnswersList(querySnapshot);
 
+      //Get all answers from sqlite
       List<AnswerModel> sqliteAnswers = [];
-      List<Map<String, dynamic>> answersRows = (await DatabaseHelper.instance.queryAllRows("table2", printResult: true)) ?? [];
+      List<Map<String, dynamic>> answersRows = (await DatabaseHelper.instance.queryAllRows(DatabaseHelper.table2, printResult: false)) ?? [];
       for (Map<String, dynamic> row in answersRows) {
         sqliteAnswers.add(AnswerModel.fromJson(row));
       }
 
-
-
       for (AnswerModel firestoreAnswer in firestoreAnswers) {
-        AnswerModel? existingAnswer = sqliteAnswers.firstWhereOrNull((answer) => answer.id == firestoreAnswer.id);
+        AnswerModel? existingAnswer = sqliteAnswers.firstWhereOrNull((answer) {
+          return answer.id.toString() == firestoreAnswer.id.toString();
+        });
         if (existingAnswer != null) {
+          print("FOUND ANSWER THAT IS IN FIRESTORE");
           // If answer exists => compare data with Firestore
           if (!areAnswersEqual(existingAnswer, firestoreAnswer)) {
             // If different => update the SQLite record
-            await DatabaseHelper.instance.updateAnswers(firestoreAnswer.toJson(), existingAnswer.id);
+
+            await DatabaseHelper.instance.updateAnswers(firestoreAnswer.toJson(false), existingAnswer.id);
           }
         } else {
           // If answer null => insert it to sqlite
-          await DatabaseHelper.instance.insert(DatabaseHelper.table2, firestoreAnswer.toJson());
+          await DatabaseHelper.instance.insert(DatabaseHelper.table2, firestoreAnswer.toJson(false));
           print("answer data saved");
         }
       }
@@ -113,12 +144,12 @@ class AnswerRepository extends GetxController{
           if (!areAnswersEqual(sqliteAnswer, existingAnswer)) {
             // If difference => update the Firestore document
             print(existingAnswer.id);
-            await _db.collection("Answers").doc(existingAnswer.id as String).set(sqliteAnswer.toJson());
+            await _db.collection("Answers").doc(existingAnswer.id.toString()).set(sqliteAnswer.toJson(true));
             print("Data updated in Firestore");
           }
         } else {
           // If answer null => insert it to firestore
-          await _db.collection("Answers").add(sqliteAnswer.toJson());
+          await _db.collection("Answers").add(sqliteAnswer.toJson(true));
           print("Data saved to Firestore");
         }
       }
@@ -144,7 +175,7 @@ class AnswerRepository extends GetxController{
   }
 
   bool areAnswersEqual(AnswerModel answer1, AnswerModel answer2) {
-    return answer1.id == answer2.id &&
+    return answer1.id.toString() == answer2.id.toString() &&
         answer1.questId == answer2.questId &&
         answer1.description == answer2.description;
   }

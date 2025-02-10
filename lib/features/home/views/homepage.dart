@@ -26,13 +26,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState(){
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) { 
-      if(!isAllowed){
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
+    final AuthController authController = AuthController();
+    if(!authController.isAdmin()){
+      AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+        if(!isAllowed){
+          AwesomeNotifications().requestPermissionToSendNotifications();
+        }
+      });
 
-    triggerNotification();
+      triggerNotification();
+    }
     super.initState();
   }
 

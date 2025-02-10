@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static const _databaseName = "quizzTest.db";
-  static const _databaseVersion = 10;
+  static const _databaseVersion = 1;
 
   static const table = 'questions';
 
@@ -124,11 +124,45 @@ class DatabaseHelper {
   }
   // Database upgrade 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-   if (oldVersion < 10) {
-    await db.execute('DROP TABLE IF EXISTS $table4');
-    await db.execute('DROP TABLE IF EXISTS $table5');
+   if (oldVersion < 13) {
+     await db.execute('DROP TABLE IF EXISTS $table');
+     await db.execute('DROP TABLE IF EXISTS $table2');
+     await db.execute('DROP TABLE IF EXISTS $table3');
+     await db.execute('DROP TABLE IF EXISTS $table4');
+     await db.execute('DROP TABLE IF EXISTS $table5');
 
-    print("this is onupgrade");
+    print("this is onUpgrade");
+
+     await db.execute('''
+          CREATE TABLE IF NOT EXISTS $table (
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnQuestion TEXT NOT NULL,
+            $columnQuizTitle TEXT NOT NULL
+
+          );
+          ''');
+     print('Database table1 created');
+     await db.execute('''
+          CREATE TABLE $table2 (
+            $columnId2 INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnCode TEXT NOT NULL,
+            $columnDescription TEXT NOT NULL,
+            $columnQuesId TEXT NOT NULL,
+            $columnTrueFalse INTEGER NOT NULL,
+            FOREIGN KEY($columnQuesId) REFERENCES $table ($columnId)
+          );
+          ''');
+     print('Database table2 created');
+     await db.execute('''
+          CREATE TABLE $table3 (
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnEmail TEXT NOT NULL,
+            $columnQuizTitle1 TEXT NOT NULL,
+            $columnScore INTEGER NOT NULL,
+            $columnTotal INTEGER NOT NULL
+          );
+          ''');
+     print('Database table3 created');
 
     await db.execute('''
           CREATE TABLE $table4 (
@@ -311,40 +345,21 @@ class DatabaseHelper {
     return await db.delete(table2, where: '$columnId2 = ?', whereArgs: [id]);
   }
 
-  Future<int> deleteQuiz(String tablePicked, String title) async{
+  Future<int> deleteQuiz(String title) async{
     Database db = await instance.database;
-    return await db.delete(tablePicked, where: '$columnQuizTitle = ?', whereArgs: [title]);
+    List<Map<String, dynamic>> questions = await db.query(table, columns: [columnId, columnQuizTitle], where: '$columnQuizTitle =?', whereArgs: [title]);
+    for(final question in questions){
+      await db.delete(DatabaseHelper.table2, where: '$columnQuesId = ?', whereArgs: [question[columnId]]);
+    }
+    return await db.delete(DatabaseHelper.table, where: '$columnQuizTitle = ?', whereArgs: [title]);
   }
+
 
   Future<int> clearTable(String tableName) async {
     Database db = await instance.database;
     return await db.delete(tableName);
   }
-  
-  // Future<int> deleteQuizQuestions() async {
-  //   Database db = await instance.database;
-  //   return await db.delete(table);
-  // }
-  //
-  // Future<int> deleteQuizAnswers() async {
-  //   Database db = await instance.database;
-  //   return await db.delete(table2);
-  // }
 
-  // Future<int> deleteQuizScore() async {
-  //   Database db = await instance.database;
-  //   return await db.delete(table3);
-  // }
-
-  // Future<int> deleteQuestionAnswered() async {
-  //   Database db = await instance.database;
-  //   return await db.delete(table4);
-  // }
-  //
-  // Future<int> deleteAnswersPicked() async {
-  //   Database db = await instance.database;
-  //   return await db.delete(table5);
-  // }
 
   Future<List<Map<String, dynamic>>?> queryAllRows(String tableName, {bool printResult=false}) async {
     Database db = await instance.database;
@@ -358,43 +373,6 @@ class DatabaseHelper {
     }
 
   }
-
-
-  // Future<void> queryAllRowsforQuizQuestions() async {
-  //   Database db = await instance.database;
-  //   List<Map<String, dynamic>> questions = await db.query(table);
-  //
-  //   print(questions);
-  // }
-
-  // Future<void> queryAllRowsforQuizAnswers() async {
-  //   Database db = await instance.database;
-  //   List<Map<String, dynamic>> answers = await db.query(table2);
-  //
-  //   print(answers);
-  // }
-
-
-  // Future<void> queryAllRowsforQuizScore() async {
-  //   Database db = await instance.database;
-  //   List<Map<String, dynamic>> quizScores = await db.query(table3);
-  //
-  //   print(quizScores);
-  // }
-  //
-  // Future<void> queryAllRowsforQuestion() async {
-  //   Database db = await instance.database;
-  //   List<Map<String, dynamic>> questions = await db.query(table4);
-  //
-  //   print(questions);
-  // }
-  //
-  // Future<void> queryAllRowsforAnswers() async {
-  //   Database db = await instance.database;
-  //   List<Map<String, dynamic>> answers = await db.query(table5);
-  //
-  //   print(answers);
-  // }
 
 
   Future<List<Map<String, dynamic>>> getQuestionsAndAnswersPicked() async {

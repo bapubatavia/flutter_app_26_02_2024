@@ -1,3 +1,5 @@
+import 'package:app_with_tabs/features/quiz/repositories/answer_repository.dart';
+import 'package:app_with_tabs/features/quiz/repositories/question_repository.dart';
 import 'package:app_with_tabs/features/quiz/views/newQuestionPage.dart';
 import 'package:app_with_tabs/services/database_helper.dart';
 import 'package:app_with_tabs/features/quiz/views/admin_quiz_display.dart';
@@ -102,14 +104,12 @@ class AdminQuizMainPage extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
-                                  DatabaseHelper.instance.clearTable("table");
-                                  // DatabaseHelper.instance.deleteQuizQuestions();
-                                  DatabaseHelper.instance.queryAllRows("table", printResult: true);
-                                  // DatabaseHelper.instance.queryAllRowsforQuizQuestions();
-                                  DatabaseHelper.instance.clearTable("table2");
-                                  // DatabaseHelper.instance.deleteQuizAnswers();
-                                  DatabaseHelper.instance.queryAllRows("table2", printResult: true);
-                                  // DatabaseHelper.instance.queryAllRowsforQuizAnswers();
+                                  DatabaseHelper.instance.clearTable(DatabaseHelper.table);
+                                  DatabaseHelper.instance.queryAllRows(DatabaseHelper.table, printResult: true);
+                                  DatabaseHelper.instance.clearTable(DatabaseHelper.table2);
+                                  DatabaseHelper.instance.queryAllRows(DatabaseHelper.table2, printResult: true);
+                                  AnswerRepository.instance.deleteAllAnswers();
+                                  QuestionRepository.instance.deleteAllQuestions();
                                 },
                                 child: const Text("Confirm"),
                               ),

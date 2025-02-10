@@ -19,12 +19,25 @@ class QuestionModel {
     );
   }
 
-  toJson(){
-    return{
-      "QuestionId": id,
-      "Question": question,
-      "QuizTitle": quizTitle,
-    };
+  toJson(bool toFirestore){
+    if (toFirestore){
+      return{
+        "QuestionId": id,
+        "Question": question,
+        "QuizTitle": quizTitle,
+      };
+    } else {
+      return{
+        "id": id,
+        "question": question,
+        "title": quizTitle,
+      };
+    }
+  }
+
+  @override
+  String toString() {
+    return 'QuestionModel(id: $id, question: $question, quizTitle: $quizTitle)';
   }
 }
 

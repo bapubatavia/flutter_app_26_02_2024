@@ -1,3 +1,4 @@
+import 'package:app_with_tabs/features/quiz/repositories/answer_repository.dart';
 import 'package:app_with_tabs/features/quiz/repositories/question_repository.dart';
 import 'package:app_with_tabs/features/quiz/views/newQuestionPage.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _AdminQuizListPageState extends State<AdminQuizListPage> {
 
   Future<List<Map<String, dynamic>>> _loadQuizTitles() async {
     await QuestionRepository.instance.syncQuestionsWithFirestore();
+    await AnswerRepository.instance.syncAnswersWithFirestore();
     return await DatabaseHelper.instance.queryDistinctQuizTitles();
   }
 
@@ -54,17 +56,42 @@ class _AdminQuizListPageState extends State<AdminQuizListPage> {
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.green,
-                      child: Text((index + 1).toString()),
+                      child: index == 0 ? Text((index + 1).toString()) : Text(index.toString()),
                     ),
                     title: Text(quizTitle),
                     trailing: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Confirm Deletion"),
+                            content: const Text("This will delete your quiz and all of its answers, is that OK?"),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop(true);
+                                  await QuestionRepository.instance.deleteQuizQuestions(quizTitle);
+                                  await DatabaseHelper.instance.deleteQuiz(quizTitle);
+                                },
+                                child: const Text("Confirm"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                         
                     child: const Icon(Icons.delete_forever, color: Colors.red,
                     ),
                   ),
                     onTap: () {
-
                       if (quizTitle != null) {
                         Navigator.push(
                           context,

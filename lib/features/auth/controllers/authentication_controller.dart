@@ -7,7 +7,7 @@ class AuthController extends GetxController {
   void checkUserRole() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      isAdmin.value = (user.email == "michaelvie97@gmail.com" || user.email =='mastayoda98@gmail.com');
+      isAdmin.value = (user.email == "michaelvie97@gmail.com" || user.email =='lol@gmail.com');
     } else {
       print('No user signed in');
     }
