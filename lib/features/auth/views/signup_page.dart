@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:app_with_tabs/pages/login_page.dart';
+import 'package:app_with_tabs/features/auth/views/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -98,7 +98,7 @@ class _SignUpPageState extends State<SignupPage>{
           ),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: double.infinity,
           child: Column(
@@ -175,7 +175,7 @@ class _SignUpPageState extends State<SignupPage>{
                               fontSize: 18,
                           ),),
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  const LoginPage()));
                           },
                         ),
                       ],

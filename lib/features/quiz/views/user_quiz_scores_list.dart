@@ -1,9 +1,9 @@
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/pages/user_quiz_result.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/quiz/views/user_quiz_result.dart';
 import 'package:flutter/material.dart';
 
 class UserQuizScoresListPage extends StatefulWidget {
-  const UserQuizScoresListPage({Key? key}) : super(key: key);
+  const UserQuizScoresListPage({super.key});
 
   @override
   _UserQuizScoresListPageState createState() => _UserQuizScoresListPageState();

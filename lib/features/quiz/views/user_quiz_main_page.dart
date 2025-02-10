@@ -1,10 +1,10 @@
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/pages/user_quiz_list.dart';
-import 'package:app_with_tabs/pages/user_quiz_scores_list.dart';
+import 'package:app_with_tabs/features/quiz/views/user_quiz_scores_list.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/quiz/views/user_quiz_list.dart';
 import 'package:flutter/material.dart';
 
 class UserQuizMainPage extends StatelessWidget {
-  UserQuizMainPage({Key? key}) : super(key: key);
+  const UserQuizMainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class UserQuizMainPage extends StatelessWidget {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,7 +46,7 @@ class UserQuizMainPage extends StatelessWidget {
                     minWidth: double.infinity,
                     height: 60,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserQuizListPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const UserQuizListPage()));
                     },
                     shape: RoundedRectangleBorder(
                     side: const BorderSide(
@@ -66,7 +66,7 @@ class UserQuizMainPage extends StatelessWidget {
                     minWidth: double.infinity,
                     height: 60,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserQuizScoresListPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const UserQuizScoresListPage()));
                     },
                     shape: RoundedRectangleBorder(
                     side: const BorderSide(
@@ -102,12 +102,18 @@ class UserQuizMainPage extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
-                                  DatabaseHelper.instance.deleteQuizScore();
-                                  DatabaseHelper.instance.queryAllRowsforQuizScore();
-                                  DatabaseHelper.instance.deleteQuestionAnswered();
-                                  DatabaseHelper.instance.queryAllRowsforQuestion();
-                                  DatabaseHelper.instance.deleteAnswersPicked();
-                                  DatabaseHelper.instance.queryAllRowsforAnswers();
+                                  DatabaseHelper.instance.clearTable("table3");
+                                  // DatabaseHelper.instance.deleteQuizScore();
+                                  DatabaseHelper.instance.queryAllRows("table3", printResult: true);
+                                  // DatabaseHelper.instance.queryAllRowsforQuizScore();
+                                  DatabaseHelper.instance.clearTable("table4");
+                                  // DatabaseHelper.instance.deleteQuestionAnswered();
+                                  DatabaseHelper.instance.queryAllRows("table4", printResult: true);
+                                  // DatabaseHelper.instance.queryAllRowsforQuestion();
+                                  DatabaseHelper.instance.clearTable("table5");
+                                  // DatabaseHelper.instance.deleteAnswersPicked();
+                                  DatabaseHelper.instance.queryAllRows("table5", printResult: true);
+                                  // DatabaseHelper.instance.queryAllRowsforAnswers();
                                 },
                                 child: const Text("Confirm"),
                               ),

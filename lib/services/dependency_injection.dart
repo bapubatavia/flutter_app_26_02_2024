@@ -1,4 +1,4 @@
-import 'package:app_with_tabs/controller/network_controller.dart';
+import 'package:app_with_tabs/features/network/controllers/network_controller.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection{

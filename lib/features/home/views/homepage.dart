@@ -1,16 +1,16 @@
-import 'package:app_with_tabs/controller/authentication_controller.dart';
-import 'package:app_with_tabs/controller/theme_controller.dart';
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/pages/about_us.dart';
-import 'package:app_with_tabs/pages/admin_quiz_main_page.dart';
-import 'package:app_with_tabs/pages/calculator.dart';
-import 'package:app_with_tabs/pages/contacts.dart';
-import 'package:app_with_tabs/pages/home.dart';
-import 'package:app_with_tabs/pages/home_location.dart';
-import 'package:app_with_tabs/pages/login_gateway.dart';
-import 'package:app_with_tabs/pages/user_quiz_main_page.dart';
-import 'package:app_with_tabs/repository/answer_repository.dart';
-import 'package:app_with_tabs/repository/question_repository.dart';
+import 'package:app_with_tabs/features/auth/controllers/authentication_controller.dart';
+import 'package:app_with_tabs/features/quiz/repositories/answer_repository.dart';
+import 'package:app_with_tabs/features/quiz/repositories/question_repository.dart';
+import 'package:app_with_tabs/features/quiz/views/admin_quiz_main_page.dart';
+import 'package:app_with_tabs/theme/theme_controller.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/home/views/about_us.dart';
+import 'package:app_with_tabs/features/home/views/calculator.dart';
+import 'package:app_with_tabs/features/home/views/contacts.dart';
+import 'package:app_with_tabs/features/home/views/home.dart';
+import 'package:app_with_tabs/features/home/views/home_location.dart';
+import 'package:app_with_tabs/features/auth/views/login_gateway.dart';
+import 'package:app_with_tabs/features/quiz/views/user_quiz_main_page.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> {
         return const Calculator();
       case 2:
         authController.checkUserRole();
-        return authController.isAdmin() ? const AdminQuizMainPage() : UserQuizMainPage();
+        return authController.isAdmin() ? const AdminQuizMainPage() : const UserQuizMainPage();
       case 3:
         return const ContactPage();
       case 4:

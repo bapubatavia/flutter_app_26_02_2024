@@ -1,5 +1,5 @@
-import 'package:app_with_tabs/pages/login_page.dart';
-import 'package:app_with_tabs/pages/signup_page.dart';
+import 'package:app_with_tabs/features/auth/views/login_page.dart';
+import 'package:app_with_tabs/features/auth/views/signup_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginGateway extends StatelessWidget {
@@ -11,7 +11,7 @@ class LoginGateway extends StatelessWidget {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -44,7 +44,7 @@ class LoginGateway extends StatelessWidget {
                     minWidth: double.infinity,
                     height: 60,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const LoginPage()));
                     },
                     shape: RoundedRectangleBorder(
                     side: const BorderSide(
@@ -64,7 +64,7 @@ class LoginGateway extends StatelessWidget {
                     minWidth: double.infinity,
                     height: 60,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  SignupPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const SignupPage()));
                     },
                     shape: RoundedRectangleBorder(
                     side: const BorderSide(

@@ -1,5 +1,5 @@
-import 'package:app_with_tabs/pages/homepage.dart';
-import 'package:app_with_tabs/pages/signup_page.dart';
+import 'package:app_with_tabs/features/auth/views/signup_page.dart';
+import 'package:app_with_tabs/features/home/views/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -30,7 +30,7 @@ class _LoginPage extends State<LoginPage>{
           icon: Icon(Icons.arrow_back_ios, size: 25, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,)
           ),
       ),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
         child: Column(
@@ -100,7 +100,7 @@ class _LoginPage extends State<LoginPage>{
                           fontSize: 18,
                         ),),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupPage()));
                         },
                       ),
                     ],

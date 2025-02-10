@@ -1,6 +1,6 @@
+import 'package:app_with_tabs/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app_with_tabs/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeController extends GetxController {

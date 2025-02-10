@@ -1,7 +1,5 @@
 
 // import 'package:app_with_tabs/controller/authentication_controller.dart';
-import 'package:app_with_tabs/repository/answer_repository.dart';
-import 'package:app_with_tabs/repository/question_repository.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';

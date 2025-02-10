@@ -1,9 +1,10 @@
-import 'package:app_with_tabs/pages/newQuestionPage.dart';
+import 'package:app_with_tabs/features/quiz/repositories/question_repository.dart';
+import 'package:app_with_tabs/features/quiz/views/newQuestionPage.dart';
 import 'package:flutter/material.dart';
-import 'package:app_with_tabs/database_helper.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
 
 class AdminQuizListPage extends StatefulWidget {
-  const AdminQuizListPage({Key? key}) : super(key: key);
+  const AdminQuizListPage({super.key});
 
   @override
   _AdminQuizListPageState createState() => _AdminQuizListPageState();
@@ -19,6 +20,7 @@ class _AdminQuizListPageState extends State<AdminQuizListPage> {
   }
 
   Future<List<Map<String, dynamic>>> _loadQuizTitles() async {
+    await QuestionRepository.instance.syncQuestionsWithFirestore();
     return await DatabaseHelper.instance.queryDistinctQuizTitles();
   }
 
@@ -89,7 +91,7 @@ class _AdminQuizListPageState extends State<AdminQuizListPage> {
 class AdminQuizQuestionsPage extends StatelessWidget {
   final String quizTitle;
 
-  const AdminQuizQuestionsPage({Key? key, required this.quizTitle}) : super(key: key);
+  const AdminQuizQuestionsPage({super.key, required this.quizTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +183,7 @@ class AdminQuestionDetailsPage extends StatefulWidget {
   final int questionId;
   final String questionDetails;
 
-  const AdminQuestionDetailsPage({Key? key, required this.questionId, required this.questionDetails}) : super(key: key);
+  const AdminQuestionDetailsPage({super.key, required this.questionId, required this.questionDetails});
 
   @override
   _AdminQuestionDetailsPageState createState() => _AdminQuestionDetailsPageState();
@@ -229,7 +231,7 @@ class _AdminQuestionDetailsPageState extends State<AdminQuestionDetailsPage> {
               itemCount: snapshot.data!.length + 1, // Add 1 for the button
               itemBuilder: (context, index) {
                 if (index == snapshot.data!.length) {
-                  return Container(
+                  return SizedBox(
                     width: 200,
                     child: MaterialButton(
                       color: Colors.white,

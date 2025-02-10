@@ -1,10 +1,10 @@
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/pages/newQuestionPage.dart';
-import 'package:app_with_tabs/pages/admin_quiz_display.dart';
+import 'package:app_with_tabs/features/quiz/views/newQuestionPage.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/quiz/views/admin_quiz_display.dart';
 import 'package:flutter/material.dart';
 
 class AdminQuizMainPage extends StatelessWidget {
-  const AdminQuizMainPage({Key? key}) : super(key: key);
+  const AdminQuizMainPage({super.key});
 
 
   @override
@@ -13,7 +13,7 @@ class AdminQuizMainPage extends StatelessWidget {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,7 +47,7 @@ class AdminQuizMainPage extends StatelessWidget {
                     minWidth: double.infinity,
                     height: 60,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  AdminQuizListPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const AdminQuizListPage()));
                     },
                     shape: RoundedRectangleBorder(
                     side: const BorderSide(
@@ -67,7 +67,7 @@ class AdminQuizMainPage extends StatelessWidget {
                     minWidth: double.infinity,
                     height: 60,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  NewQuestionPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  const NewQuestionPage()));
                     },
                     shape: RoundedRectangleBorder(
                     side: const BorderSide(
@@ -102,10 +102,14 @@ class AdminQuizMainPage extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
-                                  DatabaseHelper.instance.deleteQuizQuestions();
-                                  DatabaseHelper.instance.queryAllRowsforQuizQuestions();
-                                  DatabaseHelper.instance.deleteQuizAnswers();
-                                  DatabaseHelper.instance.queryAllRowsforQuizAnswers();
+                                  DatabaseHelper.instance.clearTable("table");
+                                  // DatabaseHelper.instance.deleteQuizQuestions();
+                                  DatabaseHelper.instance.queryAllRows("table", printResult: true);
+                                  // DatabaseHelper.instance.queryAllRowsforQuizQuestions();
+                                  DatabaseHelper.instance.clearTable("table2");
+                                  // DatabaseHelper.instance.deleteQuizAnswers();
+                                  DatabaseHelper.instance.queryAllRows("table2", printResult: true);
+                                  // DatabaseHelper.instance.queryAllRowsforQuizAnswers();
                                 },
                                 child: const Text("Confirm"),
                               ),

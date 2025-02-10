@@ -1,5 +1,5 @@
-import 'package:app_with_tabs/models/answer_model.dart';
-import 'package:app_with_tabs/models/question_model.dart';
+import 'package:app_with_tabs/features/quiz/models/answer_model.dart';
+import 'package:app_with_tabs/features/quiz/models/question_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -8,39 +8,39 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "quizzTest.db";
-  static final _databaseVersion = 10;
+  static const _databaseName = "quizzTest.db";
+  static const _databaseVersion = 10;
 
-  static final table = 'questions';
+  static const table = 'questions';
 
-  static final columnId = 'id';
-  static final columnQuestion = 'question';
-  static final columnQuizTitle = 'title';
+  static const columnId = 'id';
+  static const columnQuestion = 'question';
+  static const columnQuizTitle = 'title';
  
 
-  static final table2 = 'answers';
+  static const table2 = 'answers';
 
-  static final columnId2 = '_id';
-  static final columnCode = 'code';
-  static final columnDescription = 'description';
-  static final columnQuesId = 'question_id';
-  static final columnTrueFalse = 'correct';
+  static const columnId2 = '_id';
+  static const columnCode = 'code';
+  static const columnDescription = 'description';
+  static const columnQuesId = 'question_id';
+  static const columnTrueFalse = 'correct';
 
-  static final table3 = 'quizScore';
+  static const table3 = 'quizScore';
 
-  static final columnId3 = 'id';
-  static final columnEmail = 'user_email';
-  static final columnQuizTitle1 = 'quiz_title';
-  static final columnScore = 'score';
-  static final columnTotal = 'total';
+  static const columnId3 = 'id';
+  static const columnEmail = 'user_email';
+  static const columnQuizTitle1 = 'quiz_title';
+  static const columnScore = 'score';
+  static const columnTotal = 'total';
 
-  static final table4 = 'questionsAnswered';
+  static const table4 = 'questionsAnswered';
 
-  //same columns as questions table but then add an email column for user
+  //same columns as questions table plus an email column for user
 
-  static final table5 = 'answersPicked';
+  static const table5 = 'answersPicked';
 
-  //same columns as answers table but then add an email column for user
+  //same columns as answers table plus add an email column for user
 
 
 
@@ -121,7 +121,7 @@ class DatabaseHelper {
           );
           ''');
     print('Database table5 created');
-}
+  }
   // Database upgrade 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
    if (oldVersion < 10) {
@@ -172,29 +172,33 @@ class DatabaseHelper {
     return await db.query(table2);
   }
 
+  //For admin side fetching
   Future<List<Map<String, dynamic>>> queryQuizAnswers(int questId) async {
     Database db = await instance.database;
     return await db.query(table2, where: '$columnQuesId = ?', whereArgs: [questId]);
   }
 
+  //For user side fetching
   Future<List<AnswerModel>> queryQuizAnswersAM(int questId) async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> result = await db.query(table2, where: '$columnQuesId = ?', whereArgs: [questId]);
-
+    // Database db = await instance.database;
+    // List<Map<String, dynamic>> result = await db.query(table2, where: '$columnQuesId = ?', whereArgs: [questId]);
+    List<Map<String, dynamic>> result = await queryQuizAnswers(questId);
     List<AnswerModel> answers = result.map((row) => AnswerModel.fromJson(row)).toList();
 
     return answers;
   }
 
+  //For admin side fetching
   Future<List<Map<String, dynamic>>> queryQuizQuestions(String quizTitle) async {
     Database db = await instance.database;
     return await db.query(table, where: '$columnQuizTitle = ?', whereArgs: [quizTitle]);
   }
 
+  //For user side fetching
   Future<List<QuestionModel>> queryQuizQuestionsQM(String quizTitle) async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> result = await db.query(table, where: '$columnQuizTitle = ?', whereArgs: [quizTitle]);
-
+    // Database db = await instance.database;
+    // List<Map<String, dynamic>> result = await db.query(table, where: '$columnQuizTitle = ?', whereArgs: [quizTitle]);
+    List<Map<String, dynamic>> result = await queryQuizQuestions(quizTitle);
     List<QuestionModel> questions = result.map((row) => QuestionModel.fromJson(row)).toList();
 
     return questions;
@@ -207,14 +211,14 @@ class DatabaseHelper {
   
 
   Future<List<String>> getQuizTitles() async {
-    final _db = FirebaseFirestore.instance;
+    final db0 = FirebaseFirestore.instance;
     var connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult != ConnectivityResult.none) {
       try {
         QuerySnapshot querySnapshot = 
-          await _db.collection("Questions").get();
+          await db0.collection("Questions").get();
         List<QuestionModel> questions = querySnapshot.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;;
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
           return QuestionModel.fromJson(data);
         }).toList();
@@ -312,66 +316,85 @@ class DatabaseHelper {
     return await db.delete(tablePicked, where: '$columnQuizTitle = ?', whereArgs: [title]);
   }
 
-  Future<int> deleteQuizQuestions() async {
+  Future<int> clearTable(String tableName) async {
     Database db = await instance.database;
-    return await db.delete(table);
+    return await db.delete(tableName);
+  }
+  
+  // Future<int> deleteQuizQuestions() async {
+  //   Database db = await instance.database;
+  //   return await db.delete(table);
+  // }
+  //
+  // Future<int> deleteQuizAnswers() async {
+  //   Database db = await instance.database;
+  //   return await db.delete(table2);
+  // }
+
+  // Future<int> deleteQuizScore() async {
+  //   Database db = await instance.database;
+  //   return await db.delete(table3);
+  // }
+
+  // Future<int> deleteQuestionAnswered() async {
+  //   Database db = await instance.database;
+  //   return await db.delete(table4);
+  // }
+  //
+  // Future<int> deleteAnswersPicked() async {
+  //   Database db = await instance.database;
+  //   return await db.delete(table5);
+  // }
+
+  Future<List<Map<String, dynamic>>?> queryAllRows(String tableName, {bool printResult=false}) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> results = await db.query(tableName);
+
+    if(printResult){
+      print(results);
+      return null;
+    } else {
+      return results;
+    }
+
   }
 
-  Future<int> deleteQuizAnswers() async {
-    Database db = await instance.database;
-    return await db.delete(table2);
-  }
 
-  Future<int> deleteQuizScore() async {
-    Database db = await instance.database;
-    return await db.delete(table3);
-  }
+  // Future<void> queryAllRowsforQuizQuestions() async {
+  //   Database db = await instance.database;
+  //   List<Map<String, dynamic>> questions = await db.query(table);
+  //
+  //   print(questions);
+  // }
 
-  Future<int> deleteQuestionAnswered() async {
-    Database db = await instance.database;
-    return await db.delete(table4);
-  }
-
-  Future<int> deleteAnswersPicked() async {
-    Database db = await instance.database;
-    return await db.delete(table5);
-  }  
-
-  Future<void> queryAllRowsforQuizQuestions() async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> questions = await db.query(table);
-
-    print(questions);
-  }
-
-  Future<void> queryAllRowsforQuizAnswers() async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> answers = await db.query(table2);
-
-    print(answers);
-  }
+  // Future<void> queryAllRowsforQuizAnswers() async {
+  //   Database db = await instance.database;
+  //   List<Map<String, dynamic>> answers = await db.query(table2);
+  //
+  //   print(answers);
+  // }
 
 
-  Future<void> queryAllRowsforQuizScore() async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> quizScores = await db.query(table3);
-
-    print(quizScores);
-  }
-
-  Future<void> queryAllRowsforQuestion() async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> questions = await db.query(table4);
-
-    print(questions);
-  }
-
-  Future<void> queryAllRowsforAnswers() async {
-    Database db = await instance.database;
-    List<Map<String, dynamic>> answers = await db.query(table5);
-
-    print(answers);
-  }
+  // Future<void> queryAllRowsforQuizScore() async {
+  //   Database db = await instance.database;
+  //   List<Map<String, dynamic>> quizScores = await db.query(table3);
+  //
+  //   print(quizScores);
+  // }
+  //
+  // Future<void> queryAllRowsforQuestion() async {
+  //   Database db = await instance.database;
+  //   List<Map<String, dynamic>> questions = await db.query(table4);
+  //
+  //   print(questions);
+  // }
+  //
+  // Future<void> queryAllRowsforAnswers() async {
+  //   Database db = await instance.database;
+  //   List<Map<String, dynamic>> answers = await db.query(table5);
+  //
+  //   print(answers);
+  // }
 
 
   Future<List<Map<String, dynamic>>> getQuestionsAndAnswersPicked() async {

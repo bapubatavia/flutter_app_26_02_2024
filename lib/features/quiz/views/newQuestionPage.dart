@@ -1,15 +1,15 @@
-import 'package:app_with_tabs/pages/homepage.dart';
-import 'package:app_with_tabs/models/question_model.dart';
-import 'package:app_with_tabs/models/answer_model.dart';
-import 'package:app_with_tabs/repository/answer_repository.dart';
-import 'package:app_with_tabs/repository/question_repository.dart';
+import 'package:app_with_tabs/features/home/views/homepage.dart';
+import 'package:app_with_tabs/features/quiz/models/question_model.dart';
+import 'package:app_with_tabs/features/quiz/repositories/answer_repository.dart';
+import 'package:app_with_tabs/features/quiz/repositories/question_repository.dart';
+import 'package:app_with_tabs/features/quiz/models/answer_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:app_with_tabs/database_helper.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
 import 'package:get/get.dart';
 
 class NewQuestionPage extends StatefulWidget {
-  const NewQuestionPage({Key? key, this.quizTitle}) : super(key: key);
+  const NewQuestionPage({super.key, this.quizTitle});
 
   final String? quizTitle;
 

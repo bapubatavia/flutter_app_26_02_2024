@@ -1,6 +1,6 @@
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/models/answer_model.dart';
-import 'package:app_with_tabs/models/question_model.dart';
+import 'package:app_with_tabs/features/quiz/models/question_model.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/quiz/models/answer_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,7 @@ class AnswerRepository extends GetxController{
             colorText: Colors.red
           );
           print(error.toString());
-        };
+        }
     } else{
       print('No internet');
     }
@@ -41,7 +41,7 @@ class AnswerRepository extends GetxController{
       try {
         QuerySnapshot querySnapshot = await _db.collection("Answers").where("QuestionId", isEqualTo: questionModel.id).get();
         List<AnswerModel> answers = querySnapshot.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;;
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
           return AnswerModel.fromJson(data);
         }).toList();
@@ -83,7 +83,7 @@ class AnswerRepository extends GetxController{
       }).toList();
 
       List<AnswerModel> sqliteAnswers = [];
-      List<Map<String, dynamic>> answersRows = await DatabaseHelper.instance.queryAllAnswersRows();
+      List<Map<String, dynamic>> answersRows = (await DatabaseHelper.instance.queryAllRows("table2", printResult: true)) ?? [];
       for (Map<String, dynamic> row in answersRows) {
         sqliteAnswers.add(AnswerModel.fromJson(row));
       }

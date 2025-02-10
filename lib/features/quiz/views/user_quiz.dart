@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/models/answer_model.dart';
-import 'package:app_with_tabs/models/question_model.dart';
-import 'package:app_with_tabs/pages/user_quiz_result.dart';
-import 'package:app_with_tabs/repository/answer_repository.dart';
-import 'package:app_with_tabs/repository/question_repository.dart';
+import 'package:app_with_tabs/features/quiz/models/question_model.dart';
+import 'package:app_with_tabs/features/quiz/repositories/answer_repository.dart';
+import 'package:app_with_tabs/features/quiz/repositories/question_repository.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/quiz/models/answer_model.dart';
+import 'package:app_with_tabs/features/quiz/views/user_quiz_result.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 class UserQuizTakingPage extends StatefulWidget {
   final String quizTitle;
 
-  const UserQuizTakingPage({Key? key, required this.quizTitle}) : super(key: key);
+  const UserQuizTakingPage({super.key, required this.quizTitle});
 
   @override
   _UserQuizTakingPageState createState() => _UserQuizTakingPageState();

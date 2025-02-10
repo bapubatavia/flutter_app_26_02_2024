@@ -1,11 +1,11 @@
-import 'package:app_with_tabs/database_helper.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
 import 'package:flutter/material.dart';
 
 class QuizResultPage extends StatelessWidget {
   final int score;
   final int totalQuestions;
 
-  const QuizResultPage({Key? key, required this.score, required this.totalQuestions}) : super(key: key);
+  const QuizResultPage({super.key, required this.score, required this.totalQuestions});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
-import 'package:app_with_tabs/database_helper.dart';
-import 'package:app_with_tabs/pages/user_quiz.dart';
+import 'package:app_with_tabs/services/database_helper.dart';
+import 'package:app_with_tabs/features/quiz/views/user_quiz.dart';
 import 'package:flutter/material.dart';
 
 class UserQuizListPage extends StatefulWidget {
