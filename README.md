@@ -16,6 +16,8 @@ This app has multiple features such as:
 - Personal info card where you can upload a profile picture
 - Notification alerts regular users of newly added quizzes to the quiz game section
 
+You can find an .apk file of the app to install on your android device for testing.
+
 ## Quiz App
 
 This game is designed to have 2 types of users: Admins and Users.
