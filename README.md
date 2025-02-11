@@ -23,6 +23,7 @@ The admin can:
 - Create a quiz (that will be saved locally and on firestore db)
 - Delete quizzes
 - Update quizzes
+
 The user can:
 - Play a quiz
 - Can leave a quiz and come back to it (saved progress)
