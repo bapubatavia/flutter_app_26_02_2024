@@ -122,7 +122,6 @@ class AnswerRepository extends GetxController{
           return answer.id.toString() == firestoreAnswer.id.toString();
         });
         if (existingAnswer != null) {
-          print("FOUND ANSWER THAT IS IN FIRESTORE");
           // If answer exists => compare data with Firestore
           if (!areAnswersEqual(existingAnswer, firestoreAnswer)) {
             // If different => update the SQLite record

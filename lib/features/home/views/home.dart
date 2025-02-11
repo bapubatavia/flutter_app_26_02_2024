@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app_with_tabs/slide_items.dart';
+import 'package:app_with_tabs/services/slide_items.dart';
 
 
 class Home extends StatefulWidget {

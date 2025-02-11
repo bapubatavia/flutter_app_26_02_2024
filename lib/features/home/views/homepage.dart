@@ -27,13 +27,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState(){
     final AuthController authController = AuthController();
+    authController.checkUserRole();
     if(!authController.isAdmin()){
       AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
         if(!isAllowed){
           AwesomeNotifications().requestPermissionToSendNotifications();
         }
       });
-
       triggerNotification();
     }
     super.initState();
@@ -47,8 +47,6 @@ class _HomePageState extends State<HomePage> {
     authController.checkUserRole();
     if(authController.isAdmin()){
       try {
-        Get.put(AnswerRepository());
-        Get.put(QuestionRepository());
         await AnswerRepository.instance.syncAnswersWithFirestore();
         await QuestionRepository.instance.syncQuestionsWithFirestore();
         await _auth.signOut();
