@@ -1,16 +1,32 @@
 # app_with_tabs_2
 
-A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a starting point to my Flutter journey.
+It is designed for me to use multiple packages, work with permissions, create different UIs and integrate api keys for different google services such as Google Maps and Firebase.
+I also work with SQLite in one of the features.
 
-A few resources to get you started if this is your first Flutter project:
+This app has multiple features such as:
+- Authentication (Signup & Login) via Firebase
+- Calculator
+- Quiz app (more on this below)
+- Contact list
+- Google maps location + marker
+- Personal info card where you can upload a profile picture
+- Notification alerts regular users of newly added quizzes to the quiz game section
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Quiz App
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This game is designed to have 2 types of users: Admins and Users.
+
+The admin can:
+- Create a quiz (that will be saved locally and on firestore db)
+- Delete quizzes
+- Update quizzes
+
+The user can:
+- Pick an available quiz and play
+- Can leave a quiz and come back to it (saved progress)
+- Check his scores and answer history
+- Delete his scores to retake quizzes
