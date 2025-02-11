@@ -1,6 +1,5 @@
 # app_with_tabs_2
 
-A new Flutter project.
 
 ## Getting Started
 
