@@ -6,17 +6,13 @@ import 'package:app_with_tabs/features/quiz/repositories/question_repository.dar
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class InternetCheckBar extends GetxController {
-  final connectionChecker = InternetConnectionChecker.instance;
   final Connectivity _connectivity = Connectivity();
 
   StreamSubscription? _connectivitySubscription;
-  StreamSubscription? _internetCheckerSubscription;
   final AuthController authController = AuthController();
 
-  final RxBool hasBandwidth = true.obs;
   final RxBool isConnected = true.obs;
   int count = 0;
   @override
@@ -27,19 +23,21 @@ class InternetCheckBar extends GetxController {
   }
 
   void _initConnectivityListeners() {
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> result) {
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> result) async {
       final hasConnection = result.isNotEmpty && result.any((r) => r == ConnectivityResult.wifi || r == ConnectivityResult.mobile);
       isConnected.value = hasConnection;
-      _checkInternetConnection();
+      await _checkInternetConnection();
     });
+  }
 
-    _internetCheckerSubscription = connectionChecker.onStatusChange.listen((InternetConnectionStatus status) async {
-      if (status == InternetConnectionStatus.connected && isConnected.value){
-        hasBandwidth.value = true;
+
+  Future<void> _checkInternetConnection() async {
+    if (isConnected.value) {
         count ++;
-        if (count > 1) {
+        print("count is $count");
+        if(count > 1) {
           _showOnlineSnackbar();
-          if(authController.isAdmin()) {
+          if (authController.isAdmin()) {
             try {
               await AnswerRepository.instance.syncAnswersWithFirestore();
               await QuestionRepository.instance.syncQuestionsWithFirestore();
@@ -48,30 +46,8 @@ class InternetCheckBar extends GetxController {
             }
           }
         }
-      } else {
-        _showOfflineSnackbar();
-      }
-    });
-  }
-
-  Future<void> _checkInternetConnection() async {
-    if (isConnected.value) {
-      final bool hasInternet = await connectionChecker.hasConnection;
-      hasBandwidth.value = hasInternet;
-      if (hasInternet) {
-        count ++;
-        _showOnlineSnackbar();
-        if(authController.isAdmin()) {
-          try {
-            await AnswerRepository.instance.syncAnswersWithFirestore();
-            await QuestionRepository.instance.syncQuestionsWithFirestore();
-          } catch (e) {
-            print('Error signing out: $e');
-          }
-        }
-      } else {
-        _showOfflineSnackbar();
-      }
+    } else {
+      _showOfflineSnackbar();
     }
   }
 
@@ -119,7 +95,6 @@ class InternetCheckBar extends GetxController {
   @override
   void onClose() {
     _connectivitySubscription?.cancel();
-    _internetCheckerSubscription?.cancel();
     super.onClose();
   }
 }

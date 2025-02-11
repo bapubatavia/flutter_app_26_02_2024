@@ -14,6 +14,7 @@ class _MyHomeLocationState extends State<MyHomeLocation> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
+        mapType: MapType.normal,
         initialCameraPosition: const CameraPosition(
           target: myHomeLocation, 
           zoom: 15,
