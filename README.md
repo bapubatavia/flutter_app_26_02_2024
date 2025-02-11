@@ -17,7 +17,8 @@ This app has multiple features such as:
 
 ## Quiz App
 
-This game is designed to have 2 types of users: Admins and Users
+This game is designed to have 2 types of users: Admins and Users.
+
 The admin can:
 - Create a quiz (that will be saved locally and on firestore db)
 - Delete quizzes
