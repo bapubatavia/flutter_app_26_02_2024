@@ -14,6 +14,7 @@ This app has multiple features such as:
 - Contact list
 - Google maps location + marker
 - Personal info card where you can upload a profile picture
+- Notification alerts regular users of newly added quizzes to the quiz game section
 
 ## Quiz App
 
@@ -25,7 +26,7 @@ The admin can:
 - Update quizzes
 
 The user can:
-- Play a quiz
+- Pick an available quiz and play
 - Can leave a quiz and come back to it (saved progress)
 - Check his scores and answer history
 - Delete his scores to retake quizzes
